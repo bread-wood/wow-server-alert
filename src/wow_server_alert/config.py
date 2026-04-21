@@ -27,13 +27,30 @@ _DEFAULTS: dict = {
 }
 
 
+_WOW_AUCTION_CONFIG = Path(__file__).parents[4] / "wow-auction" / "config.yaml"
+
+
+def _load_wow_auction_blizzard() -> dict:
+    """Pull blizzard credentials from sibling wow-auction repo if available."""
+    if not _WOW_AUCTION_CONFIG.exists():
+        return {}
+    with open(_WOW_AUCTION_CONFIG) as f:
+        data = yaml.safe_load(f) or {}
+    b = data.get("blizzard", {})
+    return {k: b[k] for k in ("client_id", "client_secret", "region") if b.get(k)}
+
+
 def load_config(path: str = "config.yaml") -> dict:
     """
     Load config from YAML, then apply env var overrides.
+    Blizzard credentials fall back to ../wow-auction/config.yaml if not set locally.
     Env vars: BLIZZARD_CLIENT_ID, BLIZZARD_CLIENT_SECRET,
               TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
     """
     cfg = _deep_merge(_DEFAULTS, {})
+
+    # Pull blizzard credentials from wow-auction first; local config can override
+    cfg = _deep_merge(cfg, {"blizzard": _load_wow_auction_blizzard()})
 
     if Path(path).exists():
         with open(path) as f:
