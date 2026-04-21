@@ -1,0 +1,15 @@
+blizzard:
+  client_id: ""       # or set BLIZZARD_CLIENT_ID env var
+  client_secret: ""   # or set BLIZZARD_CLIENT_SECRET env var
+  region: us
+  locale: en_US
+
+monitor:
+  realm_id: 0         # connected realm ID — run `wow-server-alert realms <name>` to find it
+  poll_interval_seconds: 60
+
+telegram:
+  bot_token: ""       # or set TELEGRAM_BOT_TOKEN env var
+  chat_id: ""         # or set TELEGRAM_CHAT_ID env var
+
+data_dir: ~/.wow-server-alert
